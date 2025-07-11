@@ -1,45 +1,44 @@
-import './index.css'; // Certifique-se do nome correto do arquivo de estilos
+// src/App.jsx (ou App.js)
+import "./index.css"; // importe o seu CSS global
 import { useEffect } from "react";
 import axios from "axios";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Hero from "./components/Hero.jsx";
-import Login from "./components/Login.jsx";
-import Register from "./components/Register.jsx";
-import Dashboard from "./components/Dashboard.jsx"; // Import único
 
-// Config backend
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:3001";
-const API = `${BACKEND_URL}/api`;
+// Não coloque .jsx aqui — o CRA resolve automaticamente
+import Hero from "./components/Hero";
+import Login from "./components/Login";
+import Register from "./components/Register";
+import Dashboard from "./components/Dashboard";
 
-// Home faz a chamada na API e mostra o Hero
+// URL base da API (puxa de .env ou cai no localhost)
+const API_BASE =
+  process.env.REACT_APP_BACKEND_URL || "http://localhost:3001";
+
 function Home() {
   useEffect(() => {
-    async function helloWorldApi() {
+    async function fetchMessage() {
       try {
-        const response = await axios.get(`${API}/`);
-        console.log(response.data?.message || "API sem mensagem!");
-      } catch (e) {
-        console.error("Erro ao requisitar /api:", e);
+        const { data } = await axios.get(`${API_BASE}/api`);
+        console.log(data.message ?? "API respondeu, mas sem mensagem!");
+      } catch (err) {
+        console.error("Erro ao chamar GET /api:", err);
       }
     }
-    helloWorldApi();
+    fetchMessage();
   }, []);
 
   return <Hero />;
 }
 
-// **Export default único e rotas limpas**
 export default function App() {
   return (
-    <div className="App">
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/dashboard" element={<Dashboard />} /> {/* Adiciona aqui! */}
-        </Routes>
-      </BrowserRouter>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
